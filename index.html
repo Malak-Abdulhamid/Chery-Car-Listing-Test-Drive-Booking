@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chery</title>
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Box Icons -->
+    <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <style>
+        /* Modal Structure */
+        .auth-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition--);
+        }
+
+        .auth-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .auth-modal-content {
+            background: var(--bg-white--);
+            padding: 4rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+            box-shadow: var(--shadow-lg--);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .auth-modal-overlay.active .auth-modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2.5rem;
+            color: var(--text-muted--);
+            cursor: pointer;
+            transition: var(--transition--);
+        }
+
+        .close-modal-btn:hover {
+            color: var(--primary--);
+            transform: rotate(90deg);
+        }
+
+        .form-toggle-container {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 1.4rem;
+            color: var(--text-muted--);
+        }
+
+        .form-toggle-container a {
+            color: var(--primary--);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #register-form-container {
+            display: none;
+        }
+
+        /* Search Dropdown */
+        .search-form {
+            position: relative;
+        }
+
+        #search-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            z-index: 9999;
+            overflow: hidden;
+            display: none;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            min-width: 220px;
+        }
+
+        .search-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            font-size: 1.4rem;
+            color: var(--text-dark--);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .search-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-dropdown-item:hover {
+            background: var(--bg-light--);
+            color: var(--primary--);
+            padding-left: 2rem;
+        }
+
+        .search-dropdown-item i {
+            color: var(--primary--);
+            font-size: 1.2rem;
+        }
+
+        .search-no-results {
+            padding: 1.2rem 1.5rem;
+            font-size: 1.4rem;
+            color: var(--text-muted--);
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- header section start -->
+    <header class="header">
+        <section class="flex">
+
+            <div class="logo-container">
+                <div id="menu-btn" class="fas fa-bars-staggered"></div>
+
+                <!-- Logo - Chery styled text only -->
+                <a href="#" class="logo-brand">
+                    <span class="logo">Chery</span>
+                </a>
+            </div>
+
+            <nav class="navbar-desktop">
+                <div class="nav-item">
+                    <a href="#" class="nav-link">Cars <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown">
+                        <a href="#upcoming">Upcoming Models</a>
+                    </div>
+                </div>
+
+                <div class="nav-item">
+                    <a href="#" class="nav-link">Services <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown">
+                        <a href="#review-section">Client's Reviews</a>
+                        <a href="#test-drive">Test Drive</a>
+                        <a href="#faq">FAQ</a>
+                    </div>
+                </div>
+
+                <div class="nav-item">
+                    <a href="#footer" class="nav-link">Contact Us</a>
+                </div>
+
+            </nav>
+
+            <div class="actions-container">
+                <div class="search-form">
+                    <form action="" class="search-bar" onsubmit="return false;">
+                        <input type="search" placeholder="Search Cars...." id="searchBox" autocomplete="off">
+                        <label for="searchBox" class="fas fa-search"></label>
+                    </form>
+                    <!-- Search Dropdown -->
+                    <div id="search-dropdown"></div>
+                </div>
+
+                <a href="#" class="js-login" id="open-login-modal"><i class="fas fa-user"></i>Log-in</a>
+                <div id="search-toggler" class="fas fa-search"></div>
+            </div>
+
+        </section>
+    </header>
+    <!-- header section ends -->
+
+    <!-- Sidebar -->
+    <div class="side-bar">
+        <nav class="navbar-mobile">
+            <div id="close-btn"><i class="fas fa-angle-left"></i>Close Menu</div>
+
+            <div class="Title">Cars</div>
+            <div class="row">
+                <a href="#upcoming">Upcoming Models</a>
+            </div>
+
+            <div class="Title">Services</div>
+            <div class="row">
+                <a href="#footer">Contact Us</a>
+                <a href="#review-section">Client's Reviews</a>
+                <a href="#test-drive">Test Drive</a>
+                <a href="#faq">FAQ</a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Login / Register Modal -->
+    <div class="auth-modal-overlay" id="auth-modal">
+        <div class="auth-modal-content">
+
+            <div class="close-modal-btn" id="close-modal">&times;</div>
+
+            <div id="login-form-container">
+                <div class="auth-header">
+                    <div class="logo-brand">
+                        <span class="logo">Chery</span>
+                    </div>
+                    <h3>Login to your <span>Account</span></h3>
+                </div>
+
+                <form action="" method="post">
+                    <div class="input-group">
+                        <input type="email" placeholder="Email" required>
+                        <i class="fas fa-envelope icon"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" placeholder="Password" required>
+                        <i class="fas fa-lock icon"></i>
+                    </div>
+                    <div class="options-row">
+                        <label><input type="checkbox"> Remember me</label>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
+
+                <div class="divider">Or</div>
+                <div class="social-login">
+                    <a href="#" class="fab fa-google"></a>
+                    <a href="#" class="fab fa-facebook-f"></a>
+                </div>
+
+                <div class="form-toggle-container">
+                    Don't have an account? <a id="show-register">Create Account</a>
+                </div>
+            </div>
+
+            <div id="register-form-container">
+                <div class="auth-header">
+                    <div class="logo-brand">
+                        <span class="logo">Chery</span>
+                    </div>
+                    <h3>Create a new <span>Account</span></h3>
+                </div>
+
+                <form action="" method="post">
+                    <div class="input-group">
+                        <input type="text" placeholder="Full Name" required>
+                        <i class="fas fa-user icon"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" placeholder="Email Address" required>
+                        <i class="fas fa-envelope icon"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" placeholder="Create Password" required>
+                        <i class="fas fa-lock icon"></i>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" placeholder="Confirm Password" required>
+                        <i class="fas fa-lock icon"></i>
+                    </div>
+                    <button type="submit" class="submit-btn">Register</button>
+                </form>
+
+                <div class="form-toggle-container">
+                    Already have an account? <a id="show-login">Login Here</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End Modal -->
+
+    <!-- ================================== -->
+    <!-- ========== CAR SECTION ========== -->
+    <!-- ================================== -->
+    <section class="hero-section">
+
+        <div class="section-header">
+            <h2 class="section-title">Latest <span>Releases</span></h2>
+            <a href="#explore-models" class="view-all-btn">View All Cars <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="car-swiper-container">
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <!-- الكروت هتتضاف هنا بواسطة الجافاسكريبت -->
+                </div>
+
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <div class="nav-arrows">
+                <div class="swiper-nav-btn swiper-button-prev-custom"><i class="fas fa-chevron-left"></i></div>
+                <div class="swiper-nav-btn swiper-button-next-custom"><i class="fas fa-chevron-right"></i></div>
+            </div>
+        </div>
+
+    </section>
+
+    <div class="page-content-area">
+
+        <!-- ================================== -->
+        <!-- ========== SPOTLIGHT ============= -->
+        <!-- ================================== -->
+        <section class="spotlight-section" id="explore-models">
+
+            <div class="section-header">
+                <h2 class="section-title">Explore <span>Models</span></h2>
+                <div class="spotlight-nav">
+                    <div class="spot-nav-btn" id="spot-prev"><i class="fas fa-chevron-left"></i></div>
+                    <span class="spot-counter"><span id="spot-current">1</span> / <span id="spot-total">10</span></span>
+                    <div class="spot-nav-btn" id="spot-next"><i class="fas fa-chevron-right"></i></div>
+                </div>
+            </div>
+
+            <div class="spotlight-wrapper">
+
+                <!-- Left: Car Image -->
+                <div class="spotlight-visual">
+                    <div class="spot-tag" id="spot-tag">New</div>
+                    <img src="" alt="" id="spot-img" class="spot-img">
+                    <div class="spot-bg-text" id="spot-bg-text">CHERY</div>
+                </div>
+
+                <!-- Right: Car Info -->
+                <div class="spotlight-info">
+                    <h3 class="spot-name" id="spot-name">Tiggo 9</h3>
+                    <p class="spot-price" id="spot-price">2,100,000 EGP</p>
+
+                    <div class="spot-meta-row">
+                        <div class="spot-meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span id="spot-year">2026</span>
+                        </div>
+                        <div class="spot-meta-item">
+                            <i class="fas fa-gas-pump"></i>
+                            <span id="spot-fuel">Hybrid</span>
+                        </div>
+                        <div class="spot-meta-item">
+                            <i class="fas fa-cog"></i>
+                            <span id="spot-trans">Automatic</span>
+                        </div>
+                        <div class="spot-meta-item">
+                            <i class="fas fa-road"></i>
+                            <span id="spot-range">800 km</span>
+                        </div>
+                    </div>
+
+                    <div class="spot-specs">
+                        <div class="spec-bar-item">
+                            <div class="spec-bar-header">
+                                <span>Engine Power</span>
+                                <span id="spec-power-val">85%</span>
+                            </div>
+                            <div class="spec-bar-track">
+                                <div class="spec-bar-fill" id="spec-power" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="spec-bar-item">
+                            <div class="spec-bar-header">
+                                <span>Fuel Economy</span>
+                                <span id="spec-economy-val">70%</span>
+                            </div>
+                            <div class="spec-bar-track">
+                                <div class="spec-bar-fill" id="spec-economy" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div class="spec-bar-item">
+                            <div class="spec-bar-header">
+                                <span>Comfort</span>
+                                <span id="spec-comfort-val">90%</span>
+                            </div>
+                            <div class="spec-bar-track">
+                                <div class="spec-bar-fill" id="spec-comfort" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="spec-bar-item">
+                            <div class="spec-bar-header">
+                                <span>Safety</span>
+                                <span id="spec-safety-val">88%</span>
+                            </div>
+                            <div class="spec-bar-track">
+                                <div class="spec-bar-fill" id="spec-safety" style="width: 88%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- تم التعديل هنا: إضافة id و target للـ PDF -->
+                    <a href="#" id="spot-explore-btn" class="spot-explore-btn" target="_blank">View Details<i
+                            class="fas fa-arrow-right"></i></a>
+                </div>
+
+            </div>
+
+            <!-- Dots -->
+            <div class="spot-dots" id="spot-dots"></div>
+
+        </section>
+
+        <!--Upcoming Models-->
+        <section class="upcoming" id="upcoming">
+            <div class="upcoming-container">
+
+                <div class="section-header" style="margin-bottom: 3rem;">
+                    <h2 class="section-title">Upcoming <span>Models</span></h2>
+                </div>
+
+                <div class="box-container">
+
+                    <!-- Card 1 -->
+                    <div class="box">
+                        <div class="box-img-wrapper">
+                            <img src="img/tig2.png" alt="Tiggo 2">
+                        </div>
+                        <h3>Tiggo 2 PRO</h3>
+                        <p>Smart compact SUV designed for city life and daily comfort. Stylish, economical, and packed
+                            with modern features for every trip.</p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="box">
+                        <div class="box-img-wrapper">
+                            <img src="img/ari8csh.png" alt="Arrizo CSH">
+                        </div>
+                        <h3>Arrizo 8 CSH</h3>
+                        <p>A luxurious sedan that combines elegance, advanced technology, and smooth performance for a
+                            premium driving experience.</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="box">
+                        <div class="box-img-wrapper">
+                            <img src="img/himla.png" alt="Himla">
+                        </div>
+                        <h3>Himla</h3>
+                        <p>Powerful pickup truck built for adventure, heavy-duty tasks, and reliable performance on
+                            every road.</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+        <!--End-->
+
+        <!-- ========================================== -->
+        <!-- ========== TEST DRIVE BOOKING ============ -->
+        <!-- ========================================== -->
+        <section class="test-drive" id="test-drive">
+            <div class="test-drive-overlay"></div>
+            <div class="test-drive-container">
+                <div class="test-drive-content">
+                    <div class="section-header test-drive-header">
+                        <h2 class="section-title">Book a <span>Test Drive</span></h2>
+                        <p>Experience the power and luxury of Chery firsthand. Fill out the form below to schedule your
+                            drive.</p>
+                    </div>
+
+                    <form id="test-drive-form" class="booking-form">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <input type="text" id="td-name" placeholder=" Full Name" required>
+                            </div>
+                            <div class="input-group">
+                                <input type="tel" id="td-phone" placeholder="Phone Number" pattern="[0-9]{11}" title="Please enter 11 digits" required>
+                            </div>
+                            <div class="input-group">
+                                <input type="email" id="td-email" placeholder=" Email Address" required>
+                            </div>
+                            <div class="input-group">
+                                <select id="td-model" required>
+                                    <option value="" disabled selected>Select Car Model</option>
+                                    <option value="Tiggo 9">Tiggo 9</option>
+                                    <option value="eQ7">eQ7</option>
+                                    <option value="Tiggo 8 Pro Max">Tiggo 8 Pro Max</option>
+                                    <option value="Tiggo 7 Pro Max">Tiggo 7 Pro Max</option>
+                                    <option value="Arrizo 8">Arrizo 8</option>
+                                    <option value="Arrizo 6 GT">Arrizo 6 GT</option>
+                                </select>
+                            </div>
+                            <div class="input-group centered-input">
+                                <input type="date" id="td-date" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn">Schedule Drive <i
+                                class="fas fa-paper-plane"></i></button>
+                    </form>
+                    <div id="td-message" class="success-message" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Your test drive has been booked successfully!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- ========================================== -->
+        <!-- ========== CLIENT'S REVIEW SECTION ======= -->
+        <!-- ========================================== -->
+        <section class="review-section" id="review-section">
+            <div class="section-header" style="flex-direction: column; align-items: center; text-align: center;">
+                <h2 class="section-title">Client's <span>Review</span></h2>
+                <p style="color: var(--text-muted--); font-size: 1.5rem; max-width: 600px;">Hear what our valued
+                    customers have to say about their experience with Chery.</p>
+            </div>
+
+            <div class="review-swiper-container">
+                <div class="swiper reviewSwiper">
+                    <div class="swiper-wrapper">
+                    </div>
+                    <div class="swiper-pagination review-pagination"></div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+
+    <!--FAQ-->
+    <section class="faq-section" id="faq">
+        <h1 class="title">Frequently Asked <span>Questions</span></h1>
+        <ul class="faq">
+            <li>
+                <div class="q">
+                    <span class="arrow"></span>
+                    <span>Which car is best for family use?</span>
+                </div>
+                <div class="a">
+                    <p>Our SUVs are ideal for families because they offer spacious interiors, comfort, and safety
+                        features.</p>
+                </div>
+            </li>
+
+            <li>
+                <div class="q">
+                    <span class="arrow"></span>
+                    <span>Are your latest releases fuel efficient?</span>
+                </div>
+                <div class="a">
+                    <p>Yes, our newest models are designed with modern technology to improve fuel efficiency and
+                        performance.</p>
+                </div>
+            </li>
+
+            <li>
+                <div class="q">
+                    <span class="arrow"></span>
+                    <span>Do your cars come with a warranty?</span>
+                </div>
+                <div class="a">
+                    <p>Yes, all our vehicles include an official warranty for customer peace of mind.</p>
+                </div>
+            </li>
+
+            <li>
+                <div class="q">
+                    <span class="arrow"></span>
+                    <span>How can I contact customer support?</span>
+                </div>
+                <div class="a">
+                    <p>You can contact us through phone, email, or our social media platforms anytime.</p>
+                </div>
+            </li>
+
+        </ul>
+    </section>
+
+    <!-- ================================== -->
+    <!-- ============= FOOTER ============= -->
+    <!-- ================================== -->
+    <footer class="footer" id="footer">
+        <div class="footer-container">
+
+            <!-- Our Branches -->
+            <div class="footer-col">
+                <h4 class="footer-title">Our Branches</h4>
+                <ul class="footer-list">
+                    <li><i class="fas fa-location-dot"></i> Cairo, Egypt</li>
+                    <li><i class="fas fa-location-dot"></i> Alexandria, Egypt</li>
+                    <li><i class="fas fa-location-dot"></i> Giza, Egypt</li>
+                    <li><i class="fas fa-location-dot"></i> Mansoura, Egypt</li>
+                    <li><i class="fas fa-location-dot"></i> Assiut, Egypt</li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="footer-col">
+                <h4 class="footer-title">Contact Info</h4>
+                <ul class="footer-list">
+                    <li><i class="fas fa-phone"></i> +20 100-000-0000</li>
+                    <li><i class="fas fa-phone"></i> +20 111-000-0000</li>
+                    <li><i class="fas fa-envelope"></i> info@chery-eg.com</li>
+                    <li><i class="fas fa-location-dot"></i> Cairo, Egypt - 11511</li>
+                </ul>
+            </div>
+
+            <!-- Social Media -->
+            <div class="footer-col">
+                <h4 class="footer-title">Follow Us</h4>
+                <ul class="footer-list">
+                    <li><i class="fab fa-facebook"></i> Facebook</li>
+                    <li><i class="fab fa-twitter"></i> Twitter</li>
+                    <li><i class="fab fa-instagram"></i> Instagram</li>
+                    <li><i class="fab fa-linkedin"></i> LinkedIn</li>
+                    <li><i class="fab fa-youtube"></i> YouTube</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="footer-bottom">
+            <p>Chery Egypt &copy; 2026 | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script src="main.js"></script>
+
+    <!-- JavaScript للتحكم في الـ Modal -->
+    <script>
+        const authModal = document.getElementById('auth-modal');
+        const openBtn = document.getElementById('open-login-modal');
+        const closeBtn = document.getElementById('close-modal');
+
+        const loginContainer = document.getElementById('login-form-container');
+        const registerContainer = document.getElementById('register-form-container');
+
+        const showRegisterLink = document.getElementById('show-register');
+        const showLoginLink = document.getElementById('show-login');
+
+        openBtn.onclick = (e) => {
+            e.preventDefault();
+            authModal.classList.add('active');
+        };
+
+        closeBtn.onclick = () => {
+            authModal.classList.remove('active');
+        };
+
+        window.onclick = (e) => {
+            if (e.target === authModal) {
+                authModal.classList.remove('active');
+            }
+        };
+
+        showRegisterLink.onclick = () => {
+            loginContainer.style.display = 'none';
+            registerContainer.style.display = 'block';
+        };
+
+        showLoginLink.onclick = () => {
+            registerContainer.style.display = 'none';
+            loginContainer.style.display = 'block';
+        };
+    </script>
+
+    <!-- Spotlight Section JS (MODIFIED FOR PDF) -->
+    <script>
+        // أضفنا خاصية pdf لكل سيارة
+        const spotlightCars = [
+            { name: "Tiggo 9", img: "img/Tiggo 9.png", price: "2,100,000 EGP", date: "2026", fuel: "Hybrid", transmission: "Automatic", range: "800 km", tag: "", power: 85, economy: 70, comfort: 90, safety: 88, pdf: "Brochures/tiggo 9.pdf" },
+            { name: "eQ7", img: "img/eQ7.png", price: "1,850,000 EGP", date: "2025", fuel: "Electric", transmission: "Automatic", range: "500 km", tag: "", power: 80, economy: 95, comfort: 88, safety: 92, pdf: "Brochures/EQ7.pdf" },
+            { name: "Tiggo 8 Pro Max", img: "img/Tiggo 8 Pro Max.png", price: "1,650,000 EGP", date: "2025", fuel: "Petrol", transmission: "Automatic", range: "700 km", tag: "", power: 78, economy: 65, comfort: 85, safety: 82, pdf: "Brochures/tiggo 8 pro.pdf" },
+            { name: "Tiggo 8", img: "img/tiggo8.png", price: "1,155,000 EGP", date: "2026", fuel: "Petrol", transmission: "Automatic", range: "560 km", tag: "", power: 90, economy: 80, comfort: 75, safety: 85, pdf: "Brochures/arrizo 8.pdf" },
+            { name: "Tiggo 7 Pro Max", img: "img/Tiggo 7 Pro Max.png", price: "1,350,000 EGP", date: "2025", fuel: "Petrol", transmission: "Automatic", range: "650 km", tag: "", power: 72, economy: 68, comfort: 80, safety: 80, pdf: "Brochures/tiggo 7 pro.pdf" },
+            { name: "Tiggo 4 Pro", img: "img/Tiggo 4 Pro.png", price: "1,055,000 EGP", date: "2026", fuel: "Petrol", transmission: "Automatic", range: "520 km", tag: "", power: 90, economy: 70, comfort: 75, safety: 60, pdf: "Brochures/tiggo 4 pro.pdf" },
+            { name: "Arrizo 8", img: "img/Arrizo 8.png", price: "1,150,000 EGP", date: "2025", fuel: "Petrol", transmission: "Automatic", range: "600 km", tag: "", power: 70, economy: 72, comfort: 78, safety: 79, pdf: "Brochures/arrizo 8.pdf" },
+            { name: "Arrizo 6 GT", img: "img/arrizo 6 gt.png", price: "989,000 EGP", date: "2026", fuel: "Petrol", transmission: "Automatic", range: "550 km", tag: "", power: 60, economy: 85, comfort: 70, safety: 60, pdf: "Brochures/arrizo 6.pdf" },
+            { name: "Arrizo 5", img: "img/arrizo 5.png", price: "675,000 EGP", date: "2026", fuel: "Petrol", transmission: "Automatic", range: "430 km", tag: "", power: 70, economy: 85, comfort: 75, safety: 60, pdf: "Brochures/arrizo 5.pdf" },
+            { name: "Tiggo 7", img: "img/tiggo7.png", price: "950,000 EGP", date: "2025", fuel: "Petrol", transmission: "Automatic", range: "580 km", tag: "", power: 65, economy: 75, comfort: 75, safety: 77, pdf: "Brochures/tiggo 7.pdf" }
+        ];
+
+        let spotIndex = 0;
+
+        function animateBar(id, valId, target) {
+            const bar = document.getElementById(id);
+            const val = document.getElementById(valId);
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = target + '%';
+                val.textContent = target + '%';
+            }, 50);
+        }
+
+        function updateSpotlight(index, direction = 1) {
+            const car = spotlightCars[index];
+            const visual = document.querySelector('.spotlight-visual');
+            const info = document.querySelector('.spotlight-info');
+
+            visual.style.opacity = '0';
+            visual.style.transform = `translateX(${direction * -40}px)`;
+            info.style.opacity = '0';
+            info.style.transform = `translateX(${direction * 40}px)`;
+
+            setTimeout(() => {
+                document.getElementById('spot-img').src = car.img;
+                document.getElementById('spot-img').alt = car.name;
+                document.getElementById('spot-name').textContent = car.name;
+                document.getElementById('spot-price').textContent = car.price;
+                document.getElementById('spot-year').textContent = car.date;
+                document.getElementById('spot-fuel').textContent = car.fuel;
+                document.getElementById('spot-trans').textContent = car.transmission;
+                document.getElementById('spot-range').textContent = car.range;
+                document.getElementById('spot-bg-text').textContent = car.name.split(' ')[0].toUpperCase();
+                document.getElementById('spot-current').textContent = index + 1;
+
+                const tag = document.getElementById('spot-tag');
+                if (car.tag) { tag.textContent = car.tag; tag.style.display = 'block'; }
+                else { tag.style.display = 'none'; }
+
+                document.querySelectorAll('.spot-dot').forEach((d, i) => {
+                    d.classList.toggle('active', i === index);
+                });
+
+                // التعديل الخاص بك: تحديث الرابط الخاص بالزرار بالـ PDF الخاص بالسيارة الحالية
+                document.getElementById('spot-explore-btn').href = car.pdf;
+
+                visual.style.transition = 'none';
+                info.style.transition = 'none';
+                visual.style.transform = `translateX(${direction * 60}px)`;
+                info.style.transform = `translateX(${direction * -60}px)`;
+
+                requestAnimationFrame(() => {
+                    visual.style.transition = 'all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)';
+                    info.style.transition = 'all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)';
+                    visual.style.opacity = '1';
+                    visual.style.transform = 'translateX(0)';
+                    info.style.opacity = '1';
+                    info.style.transform = 'translateX(0)';
+                });
+
+                animateBar('spec-power', 'spec-power-val', car.power);
+                animateBar('spec-economy', 'spec-economy-val', car.economy);
+                animateBar('spec-comfort', 'spec-comfort-val', car.comfort);
+                animateBar('spec-safety', 'spec-safety-val', car.safety);
+
+            }, 300);
+        }
+
+        // Build dots
+        const dotsContainer = document.getElementById('spot-dots');
+        document.getElementById('spot-total').textContent = spotlightCars.length;
+        spotlightCars.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'spot-dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => { const dir = i > spotIndex ? 1 : -1; spotIndex = i; updateSpotlight(spotIndex, dir); };
+            dotsContainer.appendChild(dot);
+        });
+
+        document.getElementById('spot-next').onclick = () => {
+            spotIndex = (spotIndex + 1) % spotlightCars.length;
+            updateSpotlight(spotIndex, 1);
+        };
+        document.getElementById('spot-prev').onclick = () => {
+            spotIndex = (spotIndex - 1 + spotlightCars.length) % spotlightCars.length;
+            updateSpotlight(spotIndex, -1);
+        };
+
+        updateSpotlight(0);
+
+        // Auto-play spotlight — but pausable when user selects from search
+        let spotAutoPlay = setInterval(() => {
+            spotIndex = (spotIndex + 1) % spotlightCars.length;
+            updateSpotlight(spotIndex, 1);
+        }, 6000);
+
+        // Expose function globally so main.js search can call it
+        window.goToSpotlight = function (index) {
+            clearInterval(spotAutoPlay);
+            const dir = index > spotIndex ? 1 : -1;
+            spotIndex = index;
+            updateSpotlight(spotIndex, dir);
+            // Scroll to spotlight section
+            document.getElementById('explore-models').scrollIntoView({ behavior: 'smooth' });
+            // Resume auto-play after 10 seconds
+            spotAutoPlay = setInterval(() => {
+                spotIndex = (spotIndex + 1) % spotlightCars.length;
+                updateSpotlight(spotIndex, 1);
+            }, 6000);
+        };
+    </script>
+
+</body>
+
+</html>
